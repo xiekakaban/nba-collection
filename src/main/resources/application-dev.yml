@@ -1,0 +1,9 @@
+#端口号
+server:
+  port: 8080
+logging:
+  level:
+    com.statestr: trace
+    org.springframework.web: info
+
+
