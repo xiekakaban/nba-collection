@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSON;
 import com.statestr.entity.AbstractEntity;
 import com.statestr.util.Constants;
 import com.statestr.util.StringUtils;
-import com.sun.tools.javac.util.Assert;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -27,7 +26,6 @@ public abstract class AbstractCrawl {
 
     protected Boolean downloadImage(String imageUrl,String fileName,String type){
         if(StringUtils.notNullOrEmpty(imageUrl,fileName,type)){
-            Assert.check(Constants.STORE_DESTINATION.keySet().contains(type));
             try{
                 URL url = new URL(imageUrl);
                 URLConnection urlConnection = url.openConnection();
@@ -102,7 +100,7 @@ public abstract class AbstractCrawl {
             try {
                 if(callbackResultItem.get().isSuccess){
                     successCount ++;
-                    System.out.println(saveEntity(callbackResultItem.get()));
+                    System.out.println((Object) this.saveEntity(callbackResultItem.get()));
                 } else{
                     errorList.add(callbackResultItem.get().errorUrl);
                 }

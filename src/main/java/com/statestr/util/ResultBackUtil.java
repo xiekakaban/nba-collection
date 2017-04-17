@@ -1,6 +1,6 @@
 package com.statestr.util;
 
-import com.statestr.entity.ResultBack;
+import com.statestr.dto.ResultBack;
 import com.statestr.enums.ResultBackCodeEnum;
 
 /**

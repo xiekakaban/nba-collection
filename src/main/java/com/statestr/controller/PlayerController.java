@@ -1,9 +1,8 @@
 package com.statestr.controller;
 
 import com.statestr.entity.PlayerEntity;
-import com.statestr.entity.ResultBack;
+import com.statestr.dto.ResultBack;
 import com.statestr.enums.ResultBackCodeEnum;
-import com.statestr.repository.PlayerRepository;
 import com.statestr.service.PlayerService;
 import com.statestr.util.ResultBackUtil;
 import org.slf4j.Logger;
