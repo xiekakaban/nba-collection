@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/default.css}" />
+</head>
+<body>
+<table>
+    <tr th:each="team : ${teamlist}">
+        <td th:text="${team.id}"></td>
+        <td th:text="${team.nameCh}"></td>
+    </tr>
+</table>
+
+天野s
+</body>
+</html>

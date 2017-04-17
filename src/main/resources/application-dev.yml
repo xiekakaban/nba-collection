@@ -5,5 +5,7 @@ logging:
   level:
     com.statestr: trace
     org.springframework.web: info
-
+spring:
+  thymeleaf:
+    cache: false
 

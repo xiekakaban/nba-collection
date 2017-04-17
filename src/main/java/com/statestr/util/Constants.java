@@ -7,6 +7,7 @@ import java.util.Map;
  * Created by ruantianbo on 2017/3/27.
  */
 public class Constants {
+    // 主要用于爬去的时候
     public static final String BASEURL = "http://www.stat-nba.com/";
     public static final String USERAGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
     public static final String PLAYERIMAGEPATH = "/Users/ruantianbo/IdeaProjects/nbaCrawl/fetchImage/playerImg/";
@@ -21,6 +22,11 @@ public class Constants {
             put(TEAM_TYPE,TEAMIMAGEPATH);
         }
     };
+
+    // web
+    public static final String SESS_USER = "LoginUser";
+
+
 
 
 

@@ -1,10 +1,14 @@
 package com.statestr.aspect;
 
+import com.statestr.annotation.AuthorCheckAnnotation;
+import com.statestr.exception.NoPermissionException;
+import com.statestr.util.Constants;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 
+import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -28,8 +32,7 @@ public class AccessAspect {
 
     @Before("accessLog()")
     public void logBefore(JoinPoint joinPoint){
-        ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.currentRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
+        HttpServletRequest request = getServletRequest();
 
         StringBuffer sb = new StringBuffer();
         sb.append("url: "+request.getRequestURL()).append("\t");
@@ -40,5 +43,27 @@ public class AccessAspect {
         //参数
         sb.append("args: "+joinPoint.getArgs()).append("\n");
         logger.warn(sb.toString());
+    }
+
+    //权限检查
+    @Before("execution(public * com.statestr.controller.*.*(..)) && @annotation(com.statestr.annotation.AuthorCheckAnnotation)")
+    public void AuthorCheck(JoinPoint jp) throws NoPermissionException {
+        HttpServletRequest request = getServletRequest();
+
+        MethodSignature methodSignature = (MethodSignature)jp.getSignature();
+        AuthorCheckAnnotation authorCheckAnnotation = methodSignature.getMethod().getAnnotation(AuthorCheckAnnotation.class);
+        //需要进行权限检查
+        if(authorCheckAnnotation != null && authorCheckAnnotation.value() == Boolean.TRUE){
+            if(request.getSession().getAttribute(Constants.SESS_USER) == null){
+                throw new NoPermissionException();
+            }
+        }
+    }
+
+
+    private HttpServletRequest getServletRequest(){
+        ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.currentRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        return request;
     }
 }

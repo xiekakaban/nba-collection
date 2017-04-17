@@ -38,4 +38,5 @@ public class PlayerController {
     public ResultBack<PlayerEntity> throwException() throws Exception{
         throw new Exception();
     }
+
 }
