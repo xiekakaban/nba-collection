@@ -22,9 +22,7 @@ public class TeamController {
     @ResponseBody
     @GetMapping("/team/allmatch")
     public List<TeamMatchSummaryDto> allTeamMatch(){
-        List<TeamEntity> teamInMatchEntities = teamRepository.findAll();
 
-        return  null;
 
     }
 }
