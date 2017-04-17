@@ -1,4 +1,4 @@
-package com.statestr.entity;
+package com.statestr.dto;
 
 /**
  * Created by ruantianbo on 2017/4/9.

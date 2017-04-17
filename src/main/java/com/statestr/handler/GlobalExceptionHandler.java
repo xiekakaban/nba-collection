@@ -1,14 +1,12 @@
 package com.statestr.handler;
 
-import com.statestr.entity.ResultBack;
+import com.statestr.dto.ResultBack;
 import com.statestr.enums.ResultBackCodeEnum;
-import com.statestr.exception.NoPermissionException;
 import com.statestr.util.ResultBackUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
