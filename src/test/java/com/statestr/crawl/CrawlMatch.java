@@ -142,7 +142,7 @@ public class CrawlMatch extends AbstractCrawl{
                 // 这里可以fetch player
                 continue;
             }
-            if(detailUtil(awayTr,"gs")=="1"){
+            if("1".equalsIgnoreCase(detailUtil(awayTr,"gs"))){
                 playerInMatchEntity.setFirst(Boolean.TRUE);
             }else{
                 playerInMatchEntity.setFirst(Boolean.FALSE);
@@ -244,6 +244,7 @@ public class CrawlMatch extends AbstractCrawl{
 //        for(PlayerInMatchEntity pi : m.getAwayPlayerInMatchSet()){
 //            System.out.println(pi.getMatch().getId());
 //        }
+        //return ((T)(MatchEntity)callableResultBack.entity);
         return (T)matchService.addMatch((MatchEntity)callableResultBack.entity);
     }
 }
