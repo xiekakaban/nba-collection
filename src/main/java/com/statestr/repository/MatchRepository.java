@@ -21,4 +21,9 @@ public interface MatchRepository extends JpaRepository<MatchEntity,String> {
     @Query(value = "select match from MatchEntity match where (match.homeTeam=:firTeam and match.awayTeam=:secTeam) or (match.homeTeam=:secTeam and match.awayTeam=:firTeam)")
     List<MatchEntity> getTeamsMatchIgnore(@Param("firTeam") TeamEntity firTeam, @Param("secTeam") TeamEntity secTeam);
 
+    @Query(value = "select COUNT(match) from MatchEntity match where match.homeTeam.shortNameCh=:homeTeamShortNameCh and match.awayTeam.shortNameCh=:awayTeamShortNameCh")
+    Integer getTeamMatchCountByShortNameCh(@Param("homeTeamShortNameCh") String homeTeamShortNameCh,@Param("awayTeamShortNameCh") String awayTeamShortNameCh);
+
+    @Query(value = "select match from MatchEntity match where match.homeTeam.shortNameCh=:homeTeamShortNameCh and match.awayTeam.shortNameCh=:awayTeamShortNameCh")
+    List<MatchEntity> getTeamMatchByShortNameCh(@Param("homeTeamShortNameCh") String homeTeamShortNameCh,@Param("awayTeamShortNameCh") String awayTeamShortNameCh);
 }

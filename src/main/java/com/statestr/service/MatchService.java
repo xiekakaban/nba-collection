@@ -14,4 +14,7 @@ public interface MatchService {
     public List<MatchEntity> findAll();
     public List<MatchEntity> getTeamsMatch(TeamEntity homeTeam,TeamEntity awayTeam);
     public List<MatchEntity> getTeamsMatchIgnore(TeamEntity firTeam,TeamEntity secTeam);
+
+    public Integer getTeamMatchCountByShortNameCh(String homeTeam,String awayTeam);
+    public List<MatchEntity> getTeamMatchByShortNameCh(String homeTeamShortNameCh,String awayTeamShortNameCh);
 }

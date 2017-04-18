@@ -29,17 +29,20 @@ public class TeamEntity extends AbstractEntity{
     @Column(name="detail_url",length = 100,nullable = false)
     private String detailUrl;
 
+    @Column(name="short_name_ch",length = 50)
+    private String shortNameCh;
+
     @Transient
     private String logoStore = "";
 
-    @OneToMany(mappedBy = "teamEntity",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "teamEntity",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private Set<TeamInMatchEntity> teamInMatchEntitySet = new HashSet<TeamInMatchEntity>();
 
     public TeamEntity() {
         id = GenerateId.generate();
     }
 
-    public TeamEntity(String nameCh, String nameEn, String chimpion, String retireCloth, String logo,String shortName,String detailUrl) {
+    public TeamEntity(String nameCh, String nameEn, String chimpion, String retireCloth, String logo,String shortName,String detailUrl,String shortNameCh) {
         this.nameCh = nameCh;
         this.nameEn = nameEn;
         this.chimpion = chimpion;
@@ -47,6 +50,7 @@ public class TeamEntity extends AbstractEntity{
         this.logo = logo;
         this.detailUrl = detailUrl;
         this.shortName = shortName;
+        this.shortNameCh = shortNameCh;
     }
 
     public String getId() {
@@ -125,5 +129,13 @@ public class TeamEntity extends AbstractEntity{
 
     public void setTeamInMatchEntitySet(Set<TeamInMatchEntity> teamInMatchEntitySet) {
         this.teamInMatchEntitySet = teamInMatchEntitySet;
+    }
+
+    public String getShortNameCh() {
+        return shortNameCh;
+    }
+
+    public void setShortNameCh(String shortNameCh) {
+        this.shortNameCh = shortNameCh;
     }
 }

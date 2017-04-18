@@ -47,7 +47,7 @@ public class PlayerEntity extends AbstractEntity{
     @Column(name="salary",columnDefinition = "TEXT")
     private String salary;
 
-    @OneToMany(mappedBy = "player",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "player",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private Set<PlayerInMatchEntity> playerInMatchEntitySet = new HashSet<PlayerInMatchEntity>();
 
     public String getSalary() {

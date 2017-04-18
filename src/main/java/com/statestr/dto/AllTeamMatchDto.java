@@ -11,25 +11,25 @@ import java.util.Map;
  * Created by e604845 on 4/17/2017.
  */
 public class AllTeamMatchDto {
-    private List<TeamEntity> teamEntityList = new ArrayList<>();
-    private Map<String,TeamMatchSummaryDto> teamMatchSummaryList = new HashMap<>();
+    private List<String> teamNameList = new ArrayList<>();
+    private Map<String,Integer> teamMatchCountMap = new HashMap<>();
 
     public AllTeamMatchDto() {
     }
 
-    public List<TeamEntity> getTeamEntityList() {
-        return teamEntityList;
+    public List<String> getTeamNameList() {
+        return teamNameList;
     }
 
-    public void setTeamEntityList(List<TeamEntity> teamEntityList) {
-        this.teamEntityList = teamEntityList;
+    public void setTeamNameList(List<String> teamNameList) {
+        this.teamNameList = teamNameList;
     }
 
-    public Map<String, TeamMatchSummaryDto> getTeamMatchSummaryList() {
-        return teamMatchSummaryList;
+    public Map<String, Integer> getTeamMatchCountMap() {
+        return teamMatchCountMap;
     }
 
-    public void setTeamMatchSummaryList(Map<String, TeamMatchSummaryDto> teamMatchSummaryList) {
-        this.teamMatchSummaryList = teamMatchSummaryList;
+    public void setTeamMatchCountMap(Map<String, Integer> teamMatchCountMap) {
+        this.teamMatchCountMap = teamMatchCountMap;
     }
 }

@@ -40,4 +40,14 @@ public class MatchServiceImpl implements MatchService {
     public List<MatchEntity> getTeamsMatchIgnore(TeamEntity firTeam, TeamEntity secTeam) {
         return matchRepository.getTeamsMatchIgnore(firTeam,secTeam);
     }
+
+    @Override
+    public Integer getTeamMatchCountByShortNameCh(String homeTeam, String awayTeam) {
+        return matchRepository.getTeamMatchCountByShortNameCh(homeTeam, awayTeam);
+    }
+
+    @Override
+    public List<MatchEntity> getTeamMatchByShortNameCh(String homeTeamShortNameCh, String awayTeamShortNameCh) {
+        return matchRepository.getTeamMatchByShortNameCh(homeTeamShortNameCh, awayTeamShortNameCh);
+    }
 }

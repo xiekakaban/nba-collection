@@ -52,10 +52,10 @@ public class MatchEntity extends AbstractEntity{
     @Column(name="detail_url")
     private String detailUrl;
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "match")
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "match",fetch = FetchType.LAZY)
     private Set<PlayerInMatchEntity> playerInMatchSet = new HashSet<PlayerInMatchEntity>();
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "match")
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "match",fetch = FetchType.LAZY)
     private Set<TeamInMatchEntity> teamInMatchSet = new HashSet<TeamInMatchEntity>();
 
 
