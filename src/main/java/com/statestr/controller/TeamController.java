@@ -2,6 +2,7 @@ package com.statestr.controller;
 
 import com.statestr.dto.AllTeamMatchDto;
 import com.statestr.dto.ResultBack;
+import com.statestr.dto.TeamMatchSummaryDto;
 import com.statestr.entity.MatchEntity;
 import com.statestr.entity.TeamEntity;
 import com.statestr.repository.TeamRepository;
@@ -57,10 +58,21 @@ public class TeamController {
 
     @ResponseBody
     @GetMapping("/ajax/team/competionTeam")
-    public ResultBack<List<MatchEntity>> ajaxCompectionTeam(String homeTeamShortNameCh,String awayTeamShortNameCh,Boolean ignore){
+    public ResultBack<List<TeamMatchSummaryDto>> ajaxCompectionTeam(String homeTeamShortNameCh,String awayTeamShortNameCh,Boolean ignore){
         List<MatchEntity> matchEntityList = matchService.getTeamMatchByShortNameCh(homeTeamShortNameCh,awayTeamShortNameCh);
-
-        return ResultBackUtil.success(matchEntityList);
+        List<TeamMatchSummaryDto> teamMatchSummaryDtoList = new ArrayList<>();
+        for(MatchEntity m : matchEntityList){
+            TeamMatchSummaryDto t = new TeamMatchSummaryDto();
+            t.setHomeTeamShortNameCh(m.getHomeTeam().getShortNameCh());
+            t.setAwayTeamShortNameCh(m.getAwayTeam().getShortNameCh());
+            t.setHomeTeamScore(m.getHomeScore());
+            t.setAwayTeamScore(m.getAwayScore());
+            t.setDiffScore(t.getHomeTeamScore() - t.getAwayTeamScore());
+            t.setHappendTime(m.getHappendTime());
+            t.setMatchId(m.getId());
+            teamMatchSummaryDtoList.add(t);
+        }
+        return ResultBackUtil.success(teamMatchSummaryDtoList);
 
     }
 }

@@ -2,13 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org" layout:decorator="fragments/base_layout" th:with="title='首页'">
 
 <body>
-    <div layout:fragment="content" >
+    <div layout:fragment="content" class="container">
         <div id="wrapper" width="100%">
-            <div class="row">
-                <div id="main" class="col-md-8" style="height:900px;"></div>
+            <div class="row" id="teamSummary">
+                <div class="col-md-8">
+                    <div id="main" style="height:900px;" v-onClick="mainPanelClick"></div>
+                    <div id="main"></div>
+                </div>
                 <div id="detail" class="col-md-4" style="padding-top:50px;">
                     <div id="chart">
-                        <div id="totleMatchsChar" style="width: 480px;height:400px;"></div>
+                        <div id="totalMatchsChar" style="width: 480px;height:400px;"></div>
                     </div>
                     <div id="information" style="padding-top:20px;">
                         <div id="winChart" style="width: 500px;height:400px;"></div>
@@ -17,111 +20,204 @@
             </div>
         </div>
 
+
+
         <script>
-            initMainChart();
-            function initSpecificChart(firTeam,secTeam){
-                paramData = {
-                    "homeTeamShortNameCh":firTeam,
-                    "awayTeamShortNameCh":secTeam,
-                    "ignore":false,
-                }
-                $.ajax({
-                    url:"[[@{/ajax/team/competionTeam}]]",
-                    dataType:"json",
-                    data:paramData,
-                    success:function(data){
-                        console.log(data);
-                    },error:function(jqXHR, textStatus, errorThrown){
-                        console.log(testStatus);
+            /*****totalMatchsChar********/
+            var totalMatchChartVM = new Vue({
+                el:"#totalMatchsChar",
+                data:{ajaxData:{}},
+                watch:{
+                    "ajaxData": function(newAjaxData){
+                        var totalMatchChart = echarts.init(document.getElementById("totalMatchsChar"));
+                       totalMatchChart.setOption(newAjaxData)
                     }
-                });
-            }
-            function initMainChart(){
-                var mainChart = echarts.init(document.getElementById("main"));
-                var allMatchCountData = [];
-                var teamDataX = [];
-                var teamDataY = [];
-                mainChart.on('click', function (clickCell) {
-                    initSpecificChart(teamDataX[clickCell.data[0]],teamDataY[clickCell.data[1]]);
-                });
-                $.ajax({
-                    url: "[[@{/ajax/team/allmatchSummary}]]",
-                    dataType:"json",
-                    success:function(data){
-                        var realDate = data.data;
-                        teamDataX = teamDataY = realDate.teamNameList;
-                        for(var i=0;i<teamDataX.length;i++){
-                            for(var j=0;j<teamDataY.length;j++){
-                                allMatchCountData.push([i,j,realDate.teamMatchCountMap[teamDataX[i]+"_"+teamDataY[j]]]);
+                }
+            });
+
+            /*****winChart******/
+            var winChartVM = new Vue({
+                el:"#winChart",
+                data:{ajaxData:{}},
+                watch:{
+                    "ajaxData":function(newAjaxData){
+                        var winChart = echarts.init(document.getElementById("winChart"));
+                        winChart.setOption(newAjaxData);
+                    }
+                }
+            });
+
+            /*****main****/
+            var mainVM = new Vue({
+                el: "#main",
+                data: {
+                    ajaxData:{}
+                },
+                watch: {
+                    "ajaxData": function (newAjaxData) {
+                        var mainChart = echarts.init(document.getElementById("main"));
+                        mainChart.setOption(newAjaxData);
+                        mainChart.on('click', function (clickCell) {
+                            paramData = {
+                                "homeTeamShortNameCh":newAjaxData.xAxis.data[clickCell.data[0]],
+                                "awayTeamShortNameCh":newAjaxData.yAxis.data[clickCell.data[1]],
+                                "ignore":false
+                            }
+                            $ajaxJsonGet("[[@{/ajax/team/competionTeam}]]",paramData,summaryCompetion);
+                        });
+                    }
+                },
+                mounted: function () {
+                    var mainChart = echarts.init(document.getElementById("main"));
+                    $ajaxJsonGet("[[@{/ajax/team/allmatchSummary}]]", mainPanelData);
+
+                }
+            });
+
+
+
+            function summaryCompetion(data){
+                var realData = data.data;
+                var homeTeamWinCount = 0;
+                var awayTeamWinCount = 0;
+                var firTeam = realData[0].homeTeamShortNameCh;
+                var secTeam = realData[0].awayTeamShortNameCh;
+                var matchOption = {
+                    title:{
+                        text:firTeam+" v.s "+secTeam
+                    },
+                    tooltip:{
+                        formatter: "{a}:{c}<br/>{b}"
+                    },
+                    legend: {
+                        data:[firTeam,secTeam,"分差"]
+                    },
+                    xAxis: {
+                        data: (realData).map(function(item){return item.happendTime;})
+                    },
+                    yAxis: {},
+                    series: [{
+                        name: firTeam,
+                        type: 'bar',
+                        data: (realData).map(function(item){return item.homeTeamScore})
+                    },{
+                        name: secTeam,
+                        type: 'bar',
+                        data: (realData).map(function(item){return item.awayTeamScore})
+                    },{
+                        name: "分差",
+                        type:'bar',
+                        data:(realData).map(function(item){if(item.diffScore >0){homeTeamWinCount}else{awayTeamWinCount++} return item.diffScore;})
+                    }]
+                };
+                totalMatchChartVM.ajaxData = matchOption;
+                winOption = {
+                    title : {
+                        text: 'WIN PANEL',
+                        subtext: firTeam+" v.s. "+secTeam,
+                        x:'center'
+                    },
+                    tooltip : {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: [firTeam,secTeam]
+                    },
+                    series : [
+                        {
+                            type: 'pie',
+                            radius : '70%',
+                            center: ['50%', '60%'],
+                            data:[
+                                {value:homeTeamWinCount, name:firTeam},
+                                {value:awayTeamWinCount, name:secTeam},
+                            ],
+                            itemStyle: {
+                                emphasis: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
                             }
                         }
-                        allMatchCountData = allMatchCountData.map(function(item){
-                            return [item[0], item[1], item[2] || '-']
-                        });
-                        console.log(allMatchCountData);
-                        option = {
-                            title:{
-                                text:"2014-2016年全部比赛"
-                            },
-                            tooltip: {
-                                trigger:"item",
-                                position: 'top',
-                                formatter: function(params, ticket, callback){
-                                    return teamDataX[params.value[0]]+"v.s"+teamDataY[params.value[1]]+"<br/>"+"一共"+params.value[2]+"场";
-                                }
-                            },
-                            animation: false,
-                            grid: {
-                                height: '72%',
-                                width:'85%',
-                                x:"5%",
-                                y:"11%"
-                            },
-                            xAxis: {
-                                type: 'category',
-                                data: teamDataX,
-                                axisLabel :{
-                                    interval:0
-                                }
-                            },
-                            yAxis: {
-                                type: 'category',
-                                data: teamDataY,
-                                axisLabel :{
-                                    interval:0
-                                }
-                            },
-                            visualMap: {
-                                min: 0,
-                                max: 15,
-                                calculable: true,
-                                orient: 'horizontal',
-                                left: 'center',
-                                top: '5%'
-                            },
-                            series: [{
-                                name: 'All Match',
-                                type: 'heatmap',
-                                data: allMatchCountData,
-                                label: {
-                                    normal: {
-                                        show: true
-                                    }
-                                },
-                                itemStyle: {
-                                    emphasis: {
-                                        shadowBlur: 10,
-                                        shadowColor: 'rgba(0, 0, 0, 0.5)'
-                                    }
-                                }
-                            }]
-                        };
-                        mainChart.setOption(option);
-                    },
-                    error:function(jqXHR, textStatus, errorThrown){
-                        console.log(testStatus);
+                    ]
+                };
+                winChartVM.ajaxData = winOption;
+            }
+            function mainPanelData(data){
+                var realDate = data.data;
+                var teamDataX,teamDataY;
+                teamDataX = teamDataY = realDate.teamNameList;
+                var allMatchCountData = [];
+                for(var i=0;i<teamDataX.length;i++){
+                    for(var j=0;j<teamDataY.length;j++){
+                        allMatchCountData.push([i,j,realDate.teamMatchCountMap[teamDataX[i]+"_"+teamDataY[j]]]);
                     }
+                }
+                allMatchCountData = allMatchCountData.map(function(item){
+                    return [item[0], item[1], item[2] || '-']
                 });
+                option = {
+                    title:{
+                        text:"2014-2016年全部比赛"
+                    },
+                    tooltip: {
+                        trigger:"item",
+                        position: 'top',
+                        formatter: function(params, ticket, callback){
+                            return teamDataX[params.value[0]]+"v.s"+teamDataY[params.value[1]]+"<br/>"+"一共"+params.value[2]+"场";
+                        }
+                    },
+                    animation: false,
+                    grid: {
+                        height: '75%',
+                        width:'85%',
+                        x:"5%",
+                        y:"11%"
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: teamDataX,
+                        axisLabel :{
+                            interval:0
+                        }
+                    },
+                    yAxis: {
+                        type: 'category',
+                        data: teamDataY,
+                        axisLabel :{
+                            interval:0
+                        }
+                    },
+                    visualMap: {
+                        min: 0,
+                        max: 15,
+                        calculable: true,
+                        orient: 'horizontal',
+                        left: 'center',
+                        top: '5%'
+                    },
+                    series: [{
+                        name: 'All Match',
+                        type: 'heatmap',
+                        data: allMatchCountData,
+                        label: {
+                            normal: {
+                                show: true
+                            }
+                        },
+                        itemStyle: {
+                            emphasis: {
+                                shadowBlur: 10,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }]
+                };
+                mainVM.ajaxData=option;
             }
         </script>
     </div>
