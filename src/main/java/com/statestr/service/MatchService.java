@@ -17,4 +17,6 @@ public interface MatchService {
 
     public Integer getTeamMatchCountByShortNameCh(String homeTeam,String awayTeam);
     public List<MatchEntity> getTeamMatchByShortNameCh(String homeTeamShortNameCh,String awayTeamShortNameCh);
+
+    public MatchEntity getMatchByDateAndTeam();
 }

@@ -19,10 +19,53 @@
                 </div>
             </div>
         </div>
+        <div id="searchMatchDetail">
+            <div class="form-group mlm" style="display: inline-block;">
+                <select class="form-control" v-model="choseYear">
+                    <option v-for="year in yearList">{{ year }}</option>
+                </select>
 
-
+            </div>
+            <div class="form-group mlm" style="display: inline-block;">
+                <select class="form-control" v-model="choseDay">
+                    <option v-for="day in dayList">{{ day }}</option>
+                </select>
+            </div>
+            <button type="button" class="btn btn-info" @click="showMatchDetail">显示比赛信息</button>
+        </div>
 
         <script>
+            var selectedHomeTeam = "";
+            var selectedAwayTeam = "";
+            /******searchMatchDetail***/
+            var searchMatchDetailVM = new Vue({
+                el:"#searchMatchDetail",
+                data:{
+                    yearList:[],
+                    dayList:[],
+                    choseYear:"",
+                    choseDay:""
+                },
+                methods:{
+                    showMatchDetail:function(event){
+                        console.log("year:"+this.choseYear+",day:"+this.choseDay);
+                        paramData = {
+                            homeTeam:selectedHomeTeam,
+                            awayTeam:selectedAwayTeam,
+                            year:this.choseYear,
+                            day:this.choseDay
+                        }
+                        $ajaxJsonGet("[[@{/ajax/match/getByTimeAndTeam}]]",paramData,this.ajaxMatchDet);
+                    },
+                    ajaxMatchDet:function(data){
+                        console.log(data);
+                    }
+                },
+                beforeUpdate:function(){
+                    this.choseYear = this.yearList.length>0?(this.yearList)[0]:" ";
+                    this.choseDay = this.dayList.length>0?(this.dayList)[0]:" ";
+                }
+            });
             /*****totalMatchsChar********/
             var totalMatchChartVM = new Vue({
                 el:"#totalMatchsChar",
@@ -63,6 +106,8 @@
                                 "awayTeamShortNameCh":newAjaxData.yAxis.data[clickCell.data[1]],
                                 "ignore":false
                             }
+                            selectedHomeTeam = paramData.homeTeamShortNameCh;
+                            selectedAwayTeam = paramData.awayTeamShortNameCh;
                             $ajaxJsonGet("[[@{/ajax/team/competionTeam}]]",paramData,summaryCompetion);
                         });
                     }
@@ -107,10 +152,14 @@
                     },{
                         name: "分差",
                         type:'bar',
-                        data:(realData).map(function(item){if(item.diffScore >0){homeTeamWinCount}else{awayTeamWinCount++} return item.diffScore;})
+                        data:(realData).map(function(item){if(item.diffScore >0){homeTeamWinCount++}else{awayTeamWinCount++} return item.diffScore;})
                     }]
                 };
                 totalMatchChartVM.ajaxData = matchOption;
+                var yearList = matchOption.xAxis.data.map(function(item){return (new Date(item)).getFullYear()});
+                var dayList = matchOption.xAxis.data.map(function(item){var d = new Date(item);return ((d.getMonth()-0+1)+"月"+d.getDay()+"日")});
+                searchMatchDetailVM.yearList=yearList;
+                searchMatchDetailVM.dayList=dayList;
                 winOption = {
                     title : {
                         text: 'WIN PANEL',

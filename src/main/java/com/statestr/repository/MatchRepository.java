@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,4 +27,7 @@ public interface MatchRepository extends JpaRepository<MatchEntity,String> {
 
     @Query(value = "select match from MatchEntity match where match.homeTeam.shortNameCh=:homeTeamShortNameCh and match.awayTeam.shortNameCh=:awayTeamShortNameCh")
     List<MatchEntity> getTeamMatchByShortNameCh(@Param("homeTeamShortNameCh") String homeTeamShortNameCh,@Param("awayTeamShortNameCh") String awayTeamShortNameCh);
+
+    @Query(value = "select match from MatchEntity match where (match.homeTeam.shortNameCh=:homeTeamName and match.awayTeam.shortNameCh=:awayTeamName) and match.happendTime=:happendTime")
+    MatchEntity getMatchByDateAndTeam(@Param("homeTeamName") String homeTeamName,@Param("awayTeamName") String awayTeamName,Date happendTime);
 }
